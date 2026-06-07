@@ -488,6 +488,80 @@ document.getElementById("clearScoreForm").addEventListener("click", () => {
   renderStudentQuick();
   renderRatingQuick();
 });
+function extractPartsFromContentText(text) {
+  return String(text || "")
+    .split(" | ")
+    .map(x => x.trim())
+    .filter(Boolean)
+    .map(pair => {
+      const idx = pair.indexOf("：");
+      return idx >= 0 ? pair.slice(0, idx).trim() : "";
+    })
+    .filter(x => x && x !== "部位未選択")
+    .join(" / ");
+}
+function promptEditScoreValue(label, currentValue, required=false) {
+  const v = prompt(label + "を編集", currentValue || "");
+  if (v === null) return null;
+  const next = v.trim();
+  if (required && !next) { alert(label + "は必須です。"); return undefined; }
+  return next;
+}
+window.editScore = function(i) {
+  const row = data.scores[i];
+  if (!row) return;
+  const updated = {...row};
+
+  const date = promptEditScoreValue("テスト日（YYYY-MM-DD）", row.date, true);
+  if (date === null || date === undefined) return;
+  updated.date = date;
+
+  const testNameValue = promptEditScoreValue("テスト名", row.test_name, false);
+  if (testNameValue === null || testNameValue === undefined) return;
+  updated.test_name = testNameValue;
+
+  const student = promptEditScoreValue("生徒氏名", row.student, true);
+  if (student === null || student === undefined) return;
+  if (!inMaster("students", student)) { alert("生徒氏名はマスタから選択してください。入力値: " + student); return; }
+  updated.student = student;
+
+  const skill = promptEditScoreValue("技名", row.skill, true);
+  if (skill === null || skill === undefined) return;
+  if (!inMaster("skills", skill)) { alert("技名はマスタから選択してください。入力値: " + skill); return; }
+  updated.skill = skill;
+
+  const rating = promptEditScoreValue("評価", row.rating, true);
+  if (rating === null || rating === undefined) return;
+  if (!inMaster("ratings", rating)) { alert("評価はマスタから選択してください。入力値: " + rating); return; }
+  updated.rating = rating;
+
+  const content = prompt("コメントを編集\n例：肩：低い / 弱い | 足：伸びて", row.content || "");
+  if (content === null) return;
+  updated.content = content.trim();
+  updated.part = extractPartsFromContentText(updated.content) || row.part || "";
+
+  const memo = prompt("自由メモを編集", row.memo || "");
+  if (memo === null) return;
+  updated.memo = memo.trim();
+
+  const duplicate = data.scores.some((r, idx) =>
+    idx !== i &&
+    r.date === updated.date &&
+    r.student === updated.student &&
+    r.skill === updated.skill
+  );
+  if (duplicate) {
+    alert("重複登録です。\n同じ日付・同じ生徒氏名・同じ技名は、すでに登録されています。");
+    return;
+  }
+
+  data.scores[i] = updated;
+  data.currentDate = updated.date;
+  data.testName = updated.test_name;
+  scoreDate.value = data.currentDate || today();
+  testName.value = data.testName || "";
+  save();
+}
 window.deleteScore = function(i) { if(confirm("削除しますか？")) { data.scores.splice(i,1); save(); } }
 
 function splitCommentPairs(row) {
@@ -505,7 +579,7 @@ function expandedScoreRows() {
   data.scores.forEach((r, scoreIndex) => {
     splitCommentPairs(r).forEach((p, pairIndex) => {
       out.push({
-        scoreIndex, pairIndex,
+        no: scoreIndex + 1, scoreIndex, pairIndex,
         date: r.date,
         test_name: r.test_name,
         student: r.student,
@@ -522,6 +596,7 @@ function expandedScoreRows() {
 
 function renderScores() {
   const rows = expandedScoreRows().map(r => `<tr>
+    <td>${esc(r.no)}</td>
     <td>${esc(r.date)}</td>
     <td>${esc(r.test_name)}</td>
     <td>${esc(r.student)}</td>
@@ -530,13 +605,13 @@ function renderScores() {
     <td>${esc(r.part)}</td>
     <td>${esc(r.comment)}</td>
     <td>${esc(r.memo)}</td>
-    <td>${r.pairIndex === 0 ? `<button class="btn danger" onclick="deleteScore(${r.scoreIndex})">削除</button>` : ""}</td>
+    <td>${r.pairIndex === 0 ? `<div class="row-actions"><button class="btn secondary" onclick="editScore(${r.scoreIndex})">編集</button><button class="btn danger" onclick="deleteScore(${r.scoreIndex})">削除</button></div>` : ""}</td>
   </tr>`).join("");
-  scoreTable.innerHTML = `<thead><tr><th>日付</th><th>テスト名</th><th>生徒氏名</th><th>技名</th><th>評価</th><th>部位</th><th>内容</th><th>メモ</th><th>操作</th></tr></thead><tbody>${rows}</tbody>`;
+  scoreTable.innerHTML = `<thead><tr><th>No</th><th>日付</th><th>テスト名</th><th>生徒氏名</th><th>技名</th><th>評価</th><th>部位</th><th>内容</th><th>メモ</th><th>操作</th></tr></thead><tbody>${rows}</tbody>`;
 }
 downloadScores.addEventListener("click", () => {
-  const rows = [["日付","テスト名","生徒氏名","技名","評価","部位","内容","自由メモ"],
-    ...expandedScoreRows().map(r => [r.date,r.test_name,r.student,r.skill,r.rating,r.part,r.comment,r.memo])];
+  const rows = [["No","日付","テスト名","生徒氏名","技名","評価","部位","内容","自由メモ"],
+    ...expandedScoreRows().map(r => [r.no,r.date,r.test_name,r.student,r.skill,r.rating,r.part,r.comment,r.memo])];
   downloadCSV("technique_test_scores.csv", rows);
 });
 downloadAllMasters.addEventListener("click", () => {
