@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>テクニックテスト採点ツール 運用版（最新マスタ反映）</title>
+  <title>テクニックテスト採点ツール 運用版</title>
   <style>
     :root {
       --bg:#f7f7f8; --card:#fff; --ink:#0f172a; --muted:#64748b; --line:#e5e7eb;
@@ -23,6 +23,9 @@
     .menu button.active { background:var(--accent); color:#fff; border-color:var(--accent); }
     .panel { display:none; }
     .panel.active { display:block; }
+    .admin-only { display:none !important; }
+    body.admin .admin-only { display:block !important; }
+    body.admin .menu button.admin-only { display:block !important; }
     .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:14px; }
     .grid { display:grid; gap:12px; }
     .cols { grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
@@ -38,6 +41,7 @@
     .toolbar { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
     .toolbar .btn { width:auto; }
     .hint { color:var(--muted); font-size:13px; line-height:1.6; }
+
     .warning { background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; border-radius:12px; padding:10px; font-size:13px; line-height:1.5; }
     .wide { overflow-x:auto; }
     table { width:100%; border-collapse:collapse; background:#fff; }
@@ -87,16 +91,16 @@
   </style>
 </head>
 <body>
-<header><h1>テクニックテスト採点ツール 運用版（最新マスタ反映）</h1></header>
+<header><h1>テクニックテスト採点ツール 運用版</h1></header>
 <main>
   <nav class="menu">
     <button class="active" data-panel="score">採点入力</button>
     <button class="admin-only" data-panel="students">生徒マスタ</button>
     <button class="admin-only" data-panel="ratings">評価基準マスタ</button>
     <button class="admin-only" data-panel="skills">技名マスタ</button>
-    <button class="admin-only" data-panel="parts">コメント部位マスタ</button>
-    <button class="admin-only" data-panel="contents">コメント内容マスタ</button>
-    <button data-panel="export">CSV出力</button>
+    <button class="admin-only" data-panel="parts">部位マスタ</button>
+    <button class="admin-only" data-panel="contents">内容マスタ</button>
+    <button class="admin-only" data-panel="export">CSV出力</button>
     <button id="adminLogin" type="button">管理者</button>
   </nav>
 
@@ -104,7 +108,7 @@
     <div class="card">
       <h2>テスト設定</h2>
       <div class="grid cols">
-        <div><label>テスト日</label><input id="scoreDate" type="date"></div>
+        <div><label>テスト日 ★必須</label><input id="scoreDate" type="date"></div>
         <div><label>テスト名</label><input id="testName" placeholder="例：6月テクニックテスト"></div>
       </div>
     </div>
@@ -112,7 +116,7 @@
     <div class="card">
       <h2>採点入力</h2>
       <p class="hint">頭文字（ひらがな／英字）で検索　▼で全件表示</p>
-      <div class="warning">必須項目：生徒氏名・技名・評価。マスタ外の値は登録できません。</div>
+      <div class="warning">必須項目：テスト日・生徒氏名・技名・評価。テスト名は一度入力すると次の採点にも保持されます。マスタ外の値は登録できません。同じ日の同じ生徒・同じ技名は1回だけ登録できます。</div>
       <p class="hint">通常画面ではマスタ編集は表示されません。管理者のみ変更できます。</p>
       <label>生徒ワンタップ選択</label>
       <div class="quick-box" id="studentQuickBox"></div>
@@ -126,7 +130,7 @@
         <div><label>技名 ★必須</label><div class="ac-wrap"><input id="skillInput" placeholder="例：そ / s / sokuten"><button class="drop-btn" data-target="skillInput">▼</button></div></div>
         <div><label>評価 ★必須</label><div class="ac-wrap"><input id="ratingInput" placeholder="例：B+"><button class="drop-btn" data-target="ratingInput">▼</button></div><div class="quick-box" id="ratingQuickBox"></div></div>
         <div style="grid-column:1/-1">
-          <label>部位＋内容</label>
+          <label>コメント</label>
           <p class="hint">1つの部位に対して、内容を複数選択できます。＋で部位セットを追加します。</p>
           <div id="commentPairs"></div>
           <div class="toolbar">
@@ -157,7 +161,7 @@
   <section id="contents" class="panel admin-only"></section>
   <section id="templates" class="panel admin-only"></section>
 
-  <section id="export" class="panel">
+  <section id="export" class="panel admin-only">
     <div class="card">
       <h2>CSV出力</h2>
       <div class="toolbar">
@@ -394,8 +398,8 @@ const masterDefs = {
   students:{section:"students", title:"生徒マスタ", columns:[{key:"name",label:"生徒氏名",placeholder:"例：はるか"},{key:"grade",label:"学年",placeholder:"例：6"},{key:"reading",label:"読み方",placeholder:"例：はるか"},{key:"search_key",label:"検索キー",placeholder:"例：haruka h"}]},
   ratings:{section:"ratings", title:"評価基準マスタ", columns:[{key:"name",label:"評価",placeholder:"例：B+"},{key:"reading",label:"読み方",placeholder:"例：びーぷらす"},{key:"search_key",label:"検索キー",placeholder:"例：bplus b+"}]},
   skills:{section:"skills", title:"技名マスタ", columns:[{key:"name",label:"技名",placeholder:"例：側転"},{key:"reading",label:"読み方",placeholder:"例：そくてん"},{key:"search_key",label:"検索キー",placeholder:"例：sokuten s"}]},
-  parts:{section:"parts", title:"コメント部位マスタ", columns:[{key:"name",label:"部位",placeholder:"例：表情"},{key:"reading",label:"読み方",placeholder:"例：ひょうじょう"},{key:"search_key",label:"検索キー",placeholder:"例：hyojo h"}]},
-  contents:{section:"contents", title:"コメント内容マスタ", columns:[{key:"name",label:"内容",placeholder:"例：伸ばす"},{key:"reading",label:"読み方",placeholder:"例：のばす"},{key:"search_key",label:"検索キー",placeholder:"例：nobasu n"}]},
+  parts:{section:"parts", title:"部位マスタ", columns:[{key:"name",label:"部位",placeholder:"例：表情"},{key:"reading",label:"読み方",placeholder:"例：ひょうじょう"},{key:"search_key",label:"検索キー",placeholder:"例：hyojo h"}]},
+  contents:{section:"contents", title:"内容マスタ", columns:[{key:"name",label:"内容",placeholder:"例：伸ばす"},{key:"reading",label:"読み方",placeholder:"例：のばす"},{key:"search_key",label:"検索キー",placeholder:"例：nobasu n"}]},
   templates:{section:"templates", title:"（未使用）", columns:[{key:"name",label:"定型文",placeholder:"例：膝を伸ばす"},{key:"reading",label:"読み方",placeholder:"例：ひざをのばす"},{key:"search_key",label:"検索キー",placeholder:"例：hiza nobasu h n"}]}
 };
 function renderMaster(sectionId,title,key,columns) {
@@ -424,17 +428,18 @@ window.deleteMaster = function(key,i) {
 }
 
 document.getElementById("addScore").addEventListener("click", () => {
+  if (!scoreDate.value) { alert("テスト日は必須です。"); scoreDate.focus(); return; }
   if (!validateMasterField("生徒氏名", "students", "studentInput", true)) return;
   if (!validateMasterField("技名", "skills", "skillInput", true)) return;
   if (!validateMasterField("評価", "ratings", "ratingInput", true)) return;
   for (const p of commentPairsArr) {
     if (p.part && !inMaster("parts", p.part)) {
-      alert("コメント部位はマスタから選択してください。入力値: " + p.part);
+      alert("部位はマスタから選択してください。入力値: " + p.part);
       return;
     }
     for (const c of p.contents) {
       if (!inMaster("contents", c)) {
-        alert("コメント内容はマスタから選択してください。入力値: " + c);
+        alert("内容はマスタから選択してください。入力値: " + c);
         return;
       }
     }
@@ -447,26 +452,91 @@ document.getElementById("addScore").addEventListener("click", () => {
     content: pairSummary(), template: templateInput.value.trim(),
     memo: memoInput.value.trim()
   };
+  const duplicate = data.scores.some(r =>
+    r.date === row.date &&
+    r.student === row.student &&
+    r.skill === row.skill
+  );
+  if (duplicate) {
+    alert("重複登録です。\n同じ日付・同じ生徒氏名・同じ技名は、すでに登録されています。");
+    return;
+  }
+  const nextStudentName = nextStudentAfter(row.student);
+  data.currentDate = row.date;
+  data.testName = row.test_name;
   data.scores.push(row); save();
+  scoreDate.value = data.currentDate || today();
+  testName.value = data.testName || "";
+  studentInput.value = nextStudentName;
   ["skillInput","ratingInput","templateInput","memoInput"].forEach(id => document.getElementById(id).value = "");
   commentPairsArr = [{part:"", contents:[]}];
   renderCommentPairs();
+  renderStudentQuick();
   renderRatingQuick();
 });
 document.getElementById("clearScoreForm").addEventListener("click", () => {
+  const keepDate = scoreDate.value;
+  const keepTestName = testName.value;
+  data.currentDate = keepDate;
+  data.testName = keepTestName;
+  persist();
   ["studentInput","skillInput","ratingInput","templateInput","memoInput"].forEach(id => document.getElementById(id).value = "");
+  scoreDate.value = keepDate;
+  testName.value = keepTestName;
   commentPairsArr = [{part:"", contents:[]}];
   renderCommentPairs();
   renderStudentQuick();
   renderRatingQuick();
 });
 window.deleteScore = function(i) { if(confirm("削除しますか？")) { data.scores.splice(i,1); save(); } }
+
+function splitCommentPairs(row) {
+  const text = String(row.content || "");
+  const parts = text ? text.split(" | ").map(x => x.trim()).filter(Boolean) : [];
+  if (!parts.length) return [{ part: row.part || "", comment: "" }];
+  return parts.map(pair => {
+    const idx = pair.indexOf("：");
+    if (idx >= 0) return { part: pair.slice(0, idx), comment: pair.slice(idx + 1) };
+    return { part: "", comment: pair };
+  });
+}
+function expandedScoreRows() {
+  const out = [];
+  data.scores.forEach((r, scoreIndex) => {
+    splitCommentPairs(r).forEach((p, pairIndex) => {
+      out.push({
+        scoreIndex, pairIndex,
+        date: r.date,
+        test_name: r.test_name,
+        student: r.student,
+        skill: r.skill,
+        rating: r.rating,
+        part: p.part,
+        comment: p.comment,
+        memo: pairIndex === 0 ? (r.memo || "") : ""
+      });
+    });
+  });
+  return out;
+}
+
 function renderScores() {
-  const rows = data.scores.map((r,i) => `<tr><td>${esc(r.date)}</td><td>${esc(r.test_name)}</td><td>${esc(r.student)}</td><td>${esc(r.skill)}</td><td>${esc(r.rating)}</td><td>${esc(r.part)}</td><td>${esc(r.content)}</td><td>${esc(r.template)}</td><td>${esc(r.memo)}</td><td><button class="btn danger" onclick="deleteScore(${i})">削除</button></td></tr>`).join("");
-  scoreTable.innerHTML = `<thead><tr><th>日付</th><th>テスト名</th><th>生徒氏名</th><th>技名</th><th>評価</th><th>部位</th><th>部位＋内容</th><th>定型</th><th>メモ</th><th>操作</th></tr></thead><tbody>${rows}</tbody>`;
+  const rows = expandedScoreRows().map(r => `<tr>
+    <td>${esc(r.date)}</td>
+    <td>${esc(r.test_name)}</td>
+    <td>${esc(r.student)}</td>
+    <td>${esc(r.skill)}</td>
+    <td>${esc(r.rating)}</td>
+    <td>${esc(r.part)}</td>
+    <td>${esc(r.comment)}</td>
+    <td>${esc(r.memo)}</td>
+    <td>${r.pairIndex === 0 ? `<button class="btn danger" onclick="deleteScore(${r.scoreIndex})">削除</button>` : ""}</td>
+  </tr>`).join("");
+  scoreTable.innerHTML = `<thead><tr><th>日付</th><th>テスト名</th><th>生徒氏名</th><th>技名</th><th>評価</th><th>部位</th><th>内容</th><th>メモ</th><th>操作</th></tr></thead><tbody>${rows}</tbody>`;
 }
 downloadScores.addEventListener("click", () => {
-  const rows = [["日付","テスト名","生徒氏名","技名","評価","コメント部位","コメント部位＋内容","コメント定型","自由メモ"], ...data.scores.map(r => [r.date,r.test_name,r.student,r.skill,r.rating,r.part,r.content,r.template,r.memo])];
+  const rows = [["日付","テスト名","生徒氏名","技名","評価","部位","内容","自由メモ"],
+    ...expandedScoreRows().map(r => [r.date,r.test_name,r.student,r.skill,r.rating,r.part,r.comment,r.memo])];
   downloadCSV("technique_test_scores.csv", rows);
 });
 downloadAllMasters.addEventListener("click", () => {
@@ -474,9 +544,8 @@ downloadAllMasters.addEventListener("click", () => {
   data.students.forEach(r => rows.push(["生徒",r.name,r.grade,r.reading,r.search_key]));
   data.ratings.forEach(r => rows.push(["評価基準",r.name,"",r.reading,r.search_key]));
   data.skills.forEach(r => rows.push(["技名",r.name,"",r.reading,r.search_key]));
-  data.parts.forEach(r => rows.push(["コメント部位",r.name,"",r.reading,r.search_key]));
-  data.contents.forEach(r => rows.push(["コメント内容",r.name,"",r.reading,r.search_key]));
-  data.templates.forEach(r => rows.push(["コメント定型",r.name,"",r.reading,r.search_key]));
+  data.parts.forEach(r => rows.push(["部位",r.name,"",r.reading,r.search_key]));
+  data.contents.forEach(r => rows.push(["内容",r.name,"",r.reading,r.search_key]));
   downloadCSV("technique_test_masters_v8.csv", rows);
 });
 resetAll.addEventListener("click", () => {
@@ -501,6 +570,13 @@ function moveStudent(delta) {
   else idx = (idx + delta + names.length) % names.length;
   studentInput.value = names[idx];
   renderStudentQuick();
+}
+function nextStudentAfter(currentName) {
+  const names = data.students.map(x => x.name);
+  if (!names.length) return "";
+  const idx = names.indexOf(String(currentName || "").trim());
+  if (idx < 0) return names[0];
+  return names[(idx + 1) % names.length];
 }
 function renderStudentQuick() {
   const current = studentInput.value.trim();
@@ -547,7 +623,7 @@ function renderCommentPairs() {
         <div class="pair-title">部位 ${idx + 1}</div>
         <button type="button" class="pair-remove" onclick="removePair(${idx})">削除</button>
       </div>
-      <label>コメント部位</label>
+      <label>部位</label>
       <div class="ac-wrap">
         <input id="pairPart_${idx}" value="${esc(p.part)}" placeholder="例：ひ / h / hyojo" autocomplete="off">
         <button class="drop-btn" type="button" data-pair-part="${idx}">▼</button>
