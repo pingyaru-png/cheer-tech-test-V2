@@ -2,8 +2,11 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700;800&family=Mochiy+Pop+One&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>テクニックテスト採点ツール 運用版</title>
+  <title>チアダンステスト採点ツール　　Labyrinth</title>
   <style>
     :root {
       --bg:#f7f7f8; --card:#fff; --ink:#0f172a; --muted:#64748b; --line:#e5e7eb;
@@ -11,8 +14,8 @@
     }
     * { box-sizing:border-box; }
     body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--ink); }
-    header { position:sticky; top:0; z-index:20; background:var(--card); border-bottom:1px solid var(--line); padding:14px 18px; }
-    h1 { font-size:20px; margin:0; font-weight:800; }
+    header { position:sticky; top:0; z-index:20; background:var(--card); border-bottom:1px solid var(--line); padding:14px 18px; box-shadow:0 1px 0 rgba(124,58,237,.06); }
+    h1 { font-size:22px; margin:0; font-weight:800; color:#7c3aed; font-family:"Mochiy Pop One","M PLUS Rounded 1c",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; letter-spacing:.04em; line-height:1.35; }
     h2 { font-size:18px; margin:0 0 10px; }
     main { max-width:1100px; margin:0 auto; padding:16px; }
     .menu { display:grid; gap:10px; margin-bottom:16px; }
@@ -24,16 +27,22 @@
     .panel { display:none; }
     .panel.active { display:block; }
     .admin-only { display:none !important; }
-    body.admin .admin-only { display:block !important; }
-    body.admin .menu button.admin-only { display:block !important; }
+    body.admin .menu button.admin-only,
+    body.admin .admin-nav-btn.admin-only,
+    body.admin #adminLogout.admin-only { display:block !important; }
+    body.admin .panel.admin-only.active { display:block !important; }
     .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:14px; }
     .grid { display:grid; gap:12px; }
     .cols { grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
     label { display:block; margin:10px 0 5px; font-size:13px; color:var(--muted); font-weight:700; }
     input, textarea, button { font:inherit; }
     input, textarea {
-      width:100%; padding:12px; border:1px solid var(--line); border-radius:12px; background:#fff; font-size:16px;
+      display:block; width:100%; max-width:100%; min-width:0; padding:12px; border:1px solid var(--line); border-radius:12px; background:#fff; font-size:16px;
     }
+    input[type="date"] {
+      -webkit-appearance:none; appearance:none; min-width:0; max-width:100%; text-align:left;
+    }
+    .grid > div { min-width:0; }
     textarea { min-height:84px; }
     .btn { border:1px solid var(--accent); background:var(--accent); color:#fff; border-radius:12px; padding:12px 16px; font-weight:800; cursor:pointer; }
     .btn.secondary { background:#fff; color:var(--ink); border-color:var(--line); }
@@ -43,11 +52,26 @@
     .hint { color:var(--muted); font-size:13px; line-height:1.6; }
 
     .warning { background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; border-radius:12px; padding:10px; font-size:13px; line-height:1.5; }
-    .wide { overflow-x:auto; }
-    table { width:100%; border-collapse:collapse; background:#fff; }
-    th,td { border-bottom:1px solid var(--line); padding:8px; text-align:left; font-size:14px; vertical-align:top; }
-    th { background:#f3f4f6; white-space:nowrap; }
-    .row-actions { display:flex; gap:6px; }
+    .th-pair-pill { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#e0f2fe; border:1px solid #bae6fd; color:#075985; border-radius:999px; padding:4px 12px; height:32px; line-height:1; font-weight:900; white-space:nowrap; min-width:116px; box-sizing:border-box; }
+    .pair-head-cell { text-align:center; min-width:170px; padding-top:8px; padding-bottom:8px; padding-left:0; padding-right:0; }
+    .wide { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    table { width:100%; min-width:1120px; border-collapse:collapse; background:#fff; table-layout:fixed; }
+    th,td { border-bottom:1px solid var(--line); padding:10px 12px; text-align:left; font-size:14px; vertical-align:middle; }
+    th { background:#f3f4f6; white-space:nowrap; vertical-align:middle; }
+    #scoreTable thead th { text-align:left; }
+    #scoreTable tbody td:nth-child(1),
+    #scoreTable tbody td:nth-child(2),
+    #scoreTable tbody td:nth-child(4),
+    #scoreTable tbody td:nth-child(6),
+    #scoreTable tbody td:nth-child(7),
+    #scoreTable tbody td:nth-child(10) { white-space:nowrap; }
+    #scoreTable tbody td:nth-child(3),
+    #scoreTable tbody td:nth-child(5),
+    #scoreTable tbody td:nth-child(8),
+    #scoreTable tbody td:nth-child(9) { word-break:break-word; overflow-wrap:anywhere; white-space:normal; }
+    #scoreTable tbody td:nth-child(7) { padding-right:2px; }
+    #scoreTable tbody td:nth-child(8) { padding-left:2px; }
+    .row-actions { display:flex; gap:6px; justify-content:center; }
     .row-actions .btn { padding:6px 8px; font-size:12px; }
     .ac-wrap { position:relative; display:flex; gap:6px; }
     .ac-wrap input { flex:1; }
@@ -84,6 +108,45 @@
     }
     .chip button { border:0; background:transparent; color:var(--danger); padding:0; cursor:pointer; font-weight:900; }
 
+
+    /* 採点系の主要ボタンを紫に統一 */
+    .menu button[data-panel="score"].active,
+    #addScore,
+    #downloadScores {
+      background:#7c3aed;
+      border-color:#7c3aed;
+      color:#fff;
+    }
+    .menu button[data-panel="score"].active:hover,
+    #addScore:hover,
+    #downloadScores:hover {
+      background:#6d28d9;
+      border-color:#6d28d9;
+    }
+
+
+    /* 生徒ワンタップ選択：紫の楕円・パフォーマンス風 */
+    #studentQuickBox .quick-btn {
+      border:2px solid #a855f7;
+      background:linear-gradient(180deg,#ffffff 0%, #faf5ff 100%);
+      color:#4c1d95;
+      border-radius:999px;
+      font-weight:900;
+      box-shadow:0 3px 0 #ddd6fe, 0 8px 18px rgba(168,85,247,.16);
+      transition:transform .08s ease, box-shadow .08s ease, background .12s ease;
+    }
+    #studentQuickBox .quick-btn:hover {
+      background:linear-gradient(180deg,#f5f3ff 0%, #ede9fe 100%);
+      transform:translateY(-1px);
+      box-shadow:0 4px 0 #c4b5fd, 0 10px 20px rgba(168,85,247,.22);
+    }
+    #studentQuickBox .quick-btn.active {
+      background:linear-gradient(180deg,#a855f7 0%, #7c3aed 100%);
+      color:#fff;
+      border-color:#7c3aed;
+      box-shadow:0 3px 0 #5b21b6, 0 10px 22px rgba(124,58,237,.35);
+    }
+
     @media (min-width:800px) {
       .menu { grid-template-columns:repeat(4,1fr); }
       .menu button { font-size:16px; padding:14px; }
@@ -91,16 +154,10 @@
   </style>
 </head>
 <body>
-<header><h1>テクニックテスト採点ツール 運用版</h1></header>
+<header><h1>チアダンステスト採点ツール　　Labyrinth</h1></header>
 <main>
   <nav class="menu">
     <button class="active" data-panel="score">採点入力</button>
-    <button class="admin-only" data-panel="students">生徒マスタ</button>
-    <button class="admin-only" data-panel="ratings">評価基準マスタ</button>
-    <button class="admin-only" data-panel="skills">技名マスタ</button>
-    <button class="admin-only" data-panel="parts">部位マスタ</button>
-    <button class="admin-only" data-panel="contents">内容マスタ</button>
-    <button class="admin-only" data-panel="export">CSV出力</button>
     <button id="adminLogin" type="button">管理者</button>
   </nav>
 
@@ -115,9 +172,9 @@
 
     <div class="card">
       <h2>採点入力</h2>
-      <p class="hint">頭文字（ひらがな／英字）で検索　▼で全件表示</p>
-      <div class="warning">必須項目：テスト日・生徒氏名・技名・評価。テスト名は一度入力すると次の採点にも保持されます。マスタ外の値は登録できません。同じ日の同じ生徒・同じ技名は1回だけ登録できます。</div>
-      <p class="hint">通常画面ではマスタ編集は表示されません。管理者のみ変更できます。</p>
+      <p class="hint">頭文字入力（ひらがな／英字）で検索</p>
+      <div class="warning">・必須項目：テスト日・生徒氏名・技名・評価。<br>・同じ日・同じ生徒・同じ技名は1回のみ登録可。</div>
+      <p class="hint">採点入力画面ではマスタ編集・マスタCSV出力は表示されません。管理者のみ変更できます。</p>
       <label>生徒ワンタップ選択</label>
       <div class="quick-box" id="studentQuickBox"></div>
       <div class="toolbar">
@@ -126,7 +183,7 @@
       </div>
 
       <div class="grid cols">
-        <div><label>生徒氏名 ★必須</label><div class="ac-wrap"><input id="studentInput" placeholder="例：は / h / haruka"><button class="drop-btn" data-target="studentInput">▼</button></div></div>
+        <div><label>生徒氏名 ★必須</label><div class="ac-wrap"><input id="studentInput" placeholder="例：と / t / touwa"><button class="drop-btn" data-target="studentInput">▼</button></div></div>
         <div><label>技名 ★必須</label><div class="ac-wrap"><input id="skillInput" placeholder="例：そ / s / sokuten"><button class="drop-btn" data-target="skillInput">▼</button></div></div>
         <div><label>評価 ★必須</label><div class="ac-wrap"><input id="ratingInput" placeholder="例：B+"><button class="drop-btn" data-target="ratingInput">▼</button></div><div class="quick-box" id="ratingQuickBox"></div></div>
         <div style="grid-column:1/-1">
@@ -149,8 +206,39 @@
     </div>
 
     <div class="card wide">
-      <h2>採点一覧</h2>
+      <h2>採点結果一覧</h2>
+      <p class="hint" id="scoreFilterCount">表示件数：0件</p>
       <table id="scoreTable"></table>
+      <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--line);">
+        <h2>採点結果の絞り込み</h2>
+        <p class="hint">日付・テスト名・生徒氏名・技名・評価で絞り込みできます。</p>
+        <div class="grid cols">
+          <div><label>日付で絞り込み</label><input id="filterDate" type="date"></div>
+          <div><label>テスト名で絞り込み</label><input id="filterTestName" placeholder="例：6月"></div>
+          <div><label>生徒氏名で絞り込み</label><div class="ac-wrap"><input id="filterStudent" placeholder="例：とうわ"><button class="drop-btn" data-target="filterStudent" type="button">▼</button></div></div>
+          <div><label>技名で絞り込み</label><div class="ac-wrap"><input id="filterSkill" placeholder="例：側転"><button class="drop-btn" data-target="filterSkill" type="button">▼</button></div></div>
+          <div><label>評価で絞り込み</label><div class="ac-wrap"><input id="filterRating" placeholder="例：B+"><button class="drop-btn" data-target="filterRating" type="button">▼</button></div></div>
+        </div>
+        <div class="toolbar">
+          <button class="btn secondary" id="clearScoreFilters" type="button">絞り込みクリア</button>
+          <button class="btn" id="downloadScores" type="button">採点CSVを出力</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="adminHome" class="panel admin-only">
+    <div class="card">
+      <h2>管理者メニュー</h2>
+      <p class="hint">必要な画面のボタンを押してください。押した画面だけ表示します。採点入力へ戻ると管理者モードは自動でロックされます。</p>
+      <div class="menu">
+        <button class="admin-nav-btn admin-only" type="button" data-admin-panel="students">生徒マスタ</button>
+        <button class="admin-nav-btn admin-only" type="button" data-admin-panel="ratings">評価基準マスタ</button>
+        <button class="admin-nav-btn admin-only" type="button" data-admin-panel="skills">技名マスタ</button>
+        <button class="admin-nav-btn admin-only" type="button" data-admin-panel="parts">部位マスタ</button>
+        <button class="admin-nav-btn admin-only" type="button" data-admin-panel="contents">内容マスタ</button>
+        <button class="admin-nav-btn admin-only" type="button" data-admin-panel="export">マスタCSV出力・採点全データ削除</button>
+      </div>
     </div>
   </section>
 
@@ -163,13 +251,13 @@
 
   <section id="export" class="panel admin-only">
     <div class="card">
-      <h2>CSV出力</h2>
+      <h2>マスタCSV出力・採点全データ削除</h2>
       <div class="toolbar">
-        <button class="btn" id="downloadScores">採点CSVを出力</button>
-        <button class="btn secondary" id="downloadAllMasters">マスタCSVを一括出力</button>
-        <button class="btn danger" id="resetAll">全データ削除</button>
+        <button class="btn secondary" id="downloadAllMasters" type="button">マスタCSVを一括出力</button>
+        <button class="btn danger" id="resetAll" type="button">採点全データ削除</button>
+        <button class="btn secondary" type="button" data-panel="adminHome">管理者メニューに戻る</button>
       </div>
-      <p class="hint">CSVはExcel / Googleスプレッドシートで開けます。マスタCSVには読み方・検索キーも含まれます。</p>
+      <p class="hint">マスタCSVには読み方・検索キーも含まれます。採点CSVは採点結果一覧下の「採点CSVを出力」から出力してください。</p>
     </div>
   </section>
 </main>
@@ -177,19 +265,39 @@
 <script>
 const LS_KEY = "cheer_tech_test_v8";
 const defaultData = {
+  masterVersion: "20260607_masters_csv3_contents_fix",
   students: [{"name": "はるか", "grade": "6", "reading": "はるか", "search_key": "haruka h"}, {"name": "りの", "grade": "6", "reading": "りの", "search_key": "rino r"}, {"name": "まお", "grade": "6", "reading": "まお", "search_key": "mao m"}, {"name": "あやな", "grade": "6", "reading": "あやな", "search_key": "ayana a"}, {"name": "ゆめな", "grade": "5", "reading": "ゆめな", "search_key": "yumena y"}, {"name": "もも", "grade": "5", "reading": "もも", "search_key": "momo m"}, {"name": "ゆいか", "grade": "5", "reading": "ゆいか", "search_key": "yuika y"}, {"name": "かほ", "grade": "4", "reading": "かほ", "search_key": "kaho k"}, {"name": "しおり", "grade": "4", "reading": "しおり", "search_key": "shiori s"}, {"name": "あづみ", "grade": "4", "reading": "あづみ", "search_key": "azumi a"}, {"name": "めい", "grade": "4", "reading": "めい", "search_key": "mei m"}, {"name": "いちか", "grade": "4", "reading": "いちか", "search_key": "ichika i"}, {"name": "りこ", "grade": "4", "reading": "りこ", "search_key": "riko r"}, {"name": "つむぎ", "grade": "4", "reading": "つむぎ", "search_key": "tsumugi t"}, {"name": "しゅり", "grade": "4", "reading": "しゅり", "search_key": "shuri s"}, {"name": "とうわ", "grade": "3", "reading": "とうわ", "search_key": "touwa t"}, {"name": "りほこ", "grade": "2", "reading": "りほこ", "search_key": "rihoko r"}],
   ratings: [{"name": "A+", "reading": "えーぷらす", "search_key": "aplus a+"}, {"name": "A", "reading": "えー", "search_key": "a"}, {"name": "A-", "reading": "えーまいなす", "search_key": "aminus a-"}, {"name": "B+", "reading": "びーぷらす", "search_key": "bplus b+"}, {"name": "B", "reading": "びー", "search_key": "b"}, {"name": "B-", "reading": "びーまいなす", "search_key": "bminus b-"}, {"name": "C+", "reading": "しーぷらす", "search_key": "cplus c+"}, {"name": "C", "reading": "しー", "search_key": "c"}, {"name": "C-", "reading": "しーまいなす", "search_key": "cminus c-"}, {"name": "D+", "reading": "でぃーぷらす", "search_key": "dplus d+"}, {"name": "D", "reading": "でぃー", "search_key": "d"}, {"name": "D-", "reading": "でぃーまいなす", "search_key": "dminus d-"}],
   skills: [{"name": "キック", "reading": "きっく", "search_key": "kikku k kick"}, {"name": "シェネ", "reading": "しぇね", "search_key": "shene s"}, {"name": "ピケ", "reading": "ぴけ", "search_key": "pike p"}, {"name": "ピルエット", "reading": "ぴるえっと", "search_key": "piruetto p pirouette"}, {"name": "クッペターン", "reading": "くっぺたーん", "search_key": "kuppetan k"}, {"name": "フライアウェイ", "reading": "ふらいあうぇい", "search_key": "furaiauei f flyaway"}, {"name": "トゥータッチ", "reading": "とぅーたっち", "search_key": "tutacchi t toe touch toetouch"}, {"name": "ハードラー", "reading": "はーどらー", "search_key": "hadora h"}, {"name": "ジュッテ", "reading": "じゅって", "search_key": "jutte j"}, {"name": "セカンド", "reading": "せかんど", "search_key": "sekando s"}, {"name": "シェネセカ", "reading": "しぇねせか", "search_key": "sheneseka s"}, {"name": "側転", "reading": "そくてん", "search_key": "sokuten s"}, {"name": "フェッテ", "reading": "ふぇって", "search_key": "fette f fouette"}, {"name": "イリュージョン", "reading": "いりゅーじょん", "search_key": "iryujon i illusion"}, {"name": "Y字ターン", "reading": "わいじたーん", "search_key": "waijitan w yturn y"}, {"name": "Cジャン", "reading": "しーじゃん", "search_key": "shijan s cjan c"}],
   parts: [{"name": "かお", "reading": "かお", "search_key": "kao k"}, {"name": "表情", "reading": "ひょうじょう", "search_key": "hyoujou h"}, {"name": "目線", "reading": "めせん", "search_key": "mesen m"}, {"name": "肩", "reading": "かた", "search_key": "kata k"}, {"name": "背中", "reading": "せなか", "search_key": "senaka s"}, {"name": "手首", "reading": "てくび", "search_key": "tekubi t"}, {"name": "腕", "reading": "うで", "search_key": "ude u"}, {"name": "軸", "reading": "じく", "search_key": "jiku j"}, {"name": "足", "reading": "あし", "search_key": "ashi a"}, {"name": "つま先", "reading": "つまさき", "search_key": "tsumasaki t"}, {"name": "骨盤", "reading": "こつばん", "search_key": "kotsuban k"}, {"name": "お尻", "reading": "おしり", "search_key": "oshiri o"}, {"name": "腰", "reading": "こし", "search_key": "koshi k"}],
-  contents: [{"name": "ズレ", "reading": "ずれ", "search_key": "zure z"}, {"name": "低い", "reading": "ひくい", "search_key": "hikui h"}, {"name": "高すぎ", "reading": "たかすぎ", "search_key": "takasugi t"}, {"name": "弱い", "reading": "よわい", "search_key": "yowai y"}, {"name": "崩れ", "reading": "くずれ", "search_key": "kuzure k"}, {"name": "早い", "reading": "はやい", "search_key": "hayai h"}, {"name": "遅い", "reading": "おそい", "search_key": "osoi o"}, {"name": "曲がれる", "reading": "まがれる", "search_key": "magareru m"}, {"name": "伸びて", "reading": "のびて", "search_key": "nobite n"}, {"name": "反る", "reading": "", "search_key": ""}, {"name": "硬い", "reading": "", "search_key": ""}, {"name": "スポット", "reading": "", "search_key": ""}, {"name": "るるべ", "reading": "", "search_key": ""}, {"name": "フラ付いてる", "reading": "", "search_key": ""}, {"name": "アーム弱い", "reading": "", "search_key": ""}, {"name": "膝を伸ばし、つま先まで意識する", "reading": "ひざをのばしつまさきまでいしきする", "search_key": "hiza nobasu tsumasaki h n t"}, {"name": "体幹を締めて軸を安定させる", "reading": "たいかんをしめてじくをあんていさせる", "search_key": "taikan jiku antei t j a"}, {"name": "スポットを早く取る", "reading": "すぽっとをはやくとる", "search_key": "spot hayaku toru s h"}],
+  contents: [{"name": "ズレ", "reading": "ずれ", "search_key": "zure z"}, {"name": "低い", "reading": "ひくい", "search_key": "hikui h"}, {"name": "高すぎ", "reading": "たかすぎ", "search_key": "takasugi t"}, {"name": "弱い", "reading": "よわい", "search_key": "yowai y"}, {"name": "崩れ", "reading": "くずれ", "search_key": "kuzure k"}, {"name": "早い", "reading": "はやい", "search_key": "hayai h"}, {"name": "遅い", "reading": "おそい", "search_key": "osoi o"}, {"name": "曲がれる", "reading": "まがれる", "search_key": "magareru m"}, {"name": "伸びて", "reading": "のびて", "search_key": "nobite n"}, {"name": "反る", "reading": "そる", "search_key": "soru sr"}, {"name": "硬い", "reading": "かたい", "search_key": "katai kt"}, {"name": "スポット", "reading": "すぽっと", "search_key": "supoto sp"}, {"name": "るるべ", "reading": "るるべ", "search_key": "rurube rr"}, {"name": "フラ付き", "reading": "ふらつき", "search_key": "furatuki fr"}, {"name": "アーム弱い", "reading": "あーむよわい", "search_key": "amuyowai am"}, {"name": "膝を伸ばし、つま先まで意識する", "reading": "ひざをのばしつまさきまでいしきする", "search_key": "hiza nobasu tsumasaki h n t"}, {"name": "体幹を締めて軸を安定させる", "reading": "たいかんをしめてじくをあんていさせる", "search_key": "taikan jiku antei t j a"}, {"name": "スポットを早く取る", "reading": "すぽっとをはやくとる", "search_key": "spot hayaku toru s h"}],
   templates: [{"name": "膝を伸ばし、つま先まで意識する", "reading": "ひざをのばしつまさきまでいしきする", "search_key": "hiza nobasu tsumasaki h n t"}],
   currentDate: "",
   testName: "",
+  currentSkill: "",
   scores: []
 };
 let data = load();
 
-const ADMIN_CODE = "pp2026";
+const ADMIN_CODE = "2026";
+function switchPanel(panelId) {
+  closeAllMenus();
+  if (panelId === "score" && document.body.classList.contains("admin")) {
+    document.body.classList.remove("admin");
+    sessionStorage.removeItem("cheer_admin");
+  }
+  document.querySelectorAll(".menu button").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  const panel = document.getElementById(panelId);
+  if (panel) panel.classList.add("active");
+  const navBtn = document.querySelector(`.menu button[data-panel="${panelId}"]`);
+  if (navBtn) {
+    navBtn.classList.add("active");
+  } else if (["adminHome", "students", "ratings", "skills", "parts", "contents", "export"].includes(panelId)) {
+    document.getElementById("adminLogin").classList.add("active");
+  }
+  window.scrollTo({top:0, behavior:"smooth"});
+}
 function enableAdmin() {
   document.body.classList.add("admin");
   sessionStorage.setItem("cheer_admin", "1");
@@ -197,23 +305,21 @@ function enableAdmin() {
 function disableAdmin() {
   document.body.classList.remove("admin");
   sessionStorage.removeItem("cheer_admin");
-  document.querySelectorAll(".menu button").forEach(b => b.classList.remove("active"));
-  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-  document.querySelector('[data-panel="score"]').classList.add("active");
-  document.getElementById("score").classList.add("active");
+  switchPanel("score");
 }
 function setupAdminMode() {
   const url = new URL(location.href);
   if (url.searchParams.get("admin") === ADMIN_CODE || sessionStorage.getItem("cheer_admin") === "1") enableAdmin();
   document.getElementById("adminLogin").addEventListener("click", () => {
     if (document.body.classList.contains("admin")) {
-      if (confirm("管理者モードを終了しますか？")) disableAdmin();
+      switchPanel("adminHome");
       return;
     }
     const code = prompt("管理者パスコードを入力してください");
     if (code === ADMIN_CODE) {
       enableAdmin();
-      alert("管理者モードを表示しました。");
+      switchPanel("adminHome");
+      alert("管理者メニューを表示しました。");
     } else if (code !== null) {
       alert("パスコードが違います。");
     }
@@ -221,11 +327,45 @@ function setupAdminMode() {
 }
 
 
+
+function normalizeMasterData(saved) {
+  const latestContents = {
+    "反る": {reading:"そる", search_key:"soru sr"},
+    "硬い": {reading:"かたい", search_key:"katai kt"},
+    "スポット": {reading:"すぽっと", search_key:"supoto sp"},
+    "るるべ": {reading:"るるべ", search_key:"rurube rr"},
+    "フラ付き": {reading:"ふらつき", search_key:"furatuki fr"},
+    "フラ付いてる": {name:"フラ付き", reading:"ふらつき", search_key:"furatuki fr"},
+    "アーム弱い": {reading:"あーむよわい", search_key:"amuyowai am"}
+  };
+  if (Array.isArray(saved.contents)) {
+    saved.contents = saved.contents.map(row => {
+      const patch = latestContents[row.name];
+      if (!patch) return row;
+      return {...row, ...patch};
+    });
+    const names = saved.contents.map(x => x.name);
+    defaultData.contents.forEach(row => {
+      if (!names.includes(row.name)) saved.contents.push(structuredClone(row));
+    });
+  }
+  return saved;
+}
+
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem(LS_KEY));
     if (!saved) return structuredClone(defaultData);
     for (const k of Object.keys(defaultData)) if (saved[k] === undefined) saved[k] = structuredClone(defaultData[k]);
+    if (saved.masterVersion !== defaultData.masterVersion) {
+      ["students","ratings","skills","parts","contents","templates"].forEach(k => {
+        saved[k] = structuredClone(defaultData[k]);
+      });
+      saved.masterVersion = defaultData.masterVersion;
+      localStorage.setItem(LS_KEY, JSON.stringify(saved));
+    }
+    normalizeMasterData(saved);
+    localStorage.setItem(LS_KEY, JSON.stringify(saved));
     return saved;
   } catch { return structuredClone(defaultData); }
 }
@@ -246,22 +386,23 @@ function downloadCSV(filename, rows) {
 
 document.getElementById("scoreDate").value = data.currentDate || today();
 document.getElementById("testName").value = data.testName || "";
+document.getElementById("skillInput").value = data.currentSkill || "";
 document.getElementById("scoreDate").addEventListener("change", () => { data.currentDate = scoreDate.value; persist(); });
 document.getElementById("testName").addEventListener("input", () => { data.testName = testName.value; persist(); });
+document.getElementById("skillInput").addEventListener("input", () => { data.currentSkill = skillInput.value.trim(); persist(); });
 
-document.querySelectorAll(".menu button").forEach(btn => {
+document.querySelectorAll("[data-panel]").forEach(btn => {
   btn.addEventListener("click", () => {
-    if (!btn.dataset.panel) return;
     if (btn.classList.contains("admin-only") && !document.body.classList.contains("admin")) return;
-    closeAllMenus();
-    document.querySelectorAll(".menu button").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById(btn.dataset.panel).classList.add("active");
-    window.scrollTo({top:0, behavior:"smooth"});
+    switchPanel(btn.dataset.panel);
   });
 });
-
+document.querySelectorAll("[data-admin-panel]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (!document.body.classList.contains("admin")) return;
+    switchPanel(btn.dataset.adminPanel);
+  });
+});
 const kanaMap = {
   "きゃ":"kya","きゅ":"kyu","きょ":"kyo","しゃ":"sha","しゅ":"shu","しょ":"sho","しぇ":"she",
   "ちゃ":"cha","ちゅ":"chu","ちょ":"cho","ちぇ":"che","にゃ":"nya","にゅ":"nyu","にょ":"nyo",
@@ -353,11 +494,12 @@ function showMenu(input, key, all=false, onSelect=null) {
       if (onSelect) onSelect(item.dataset.v);
       if (input.id === "ratingInput") renderRatingQuick();
       if (input.id === "studentInput") renderStudentQuick();
+      if (["filterStudent","filterSkill","filterRating"].includes(input.id)) renderScores();
       closeAllMenus();
     });
   });
 }
-const acMap = { studentInput:"students", skillInput:"skills", ratingInput:"ratings", templateInput:"templates" };
+const acMap = { studentInput:"students", skillInput:"skills", ratingInput:"ratings", templateInput:"templates", filterStudent:"students", filterSkill:"skills", filterRating:"ratings" };
 Object.entries(acMap).forEach(([id,key]) => {
   const input = document.getElementById(id);
   input.setAttribute("autocomplete", "off");
@@ -406,7 +548,7 @@ function renderMaster(sectionId,title,key,columns) {
   const sec = document.getElementById(sectionId);
   const inputs = columns.map(c => `<div><label>${esc(c.label)}</label><input id="${sectionId}_${c.key}" placeholder="${esc(c.placeholder)}"></div>`).join("");
   const rows = (data[key] || []).map((r,i) => `<tr>${columns.map(c=>`<td>${esc(r[c.key])}</td>`).join("")}<td class="row-actions"><button class="btn secondary" onclick="editMaster('${key}',${i})">編集</button><button class="btn danger" onclick="deleteMaster('${key}',${i})">削除</button></td></tr>`).join("");
-  sec.innerHTML = `<div class="card"><h2>${esc(title)}</h2><div class="grid cols">${inputs}</div><div class="toolbar"><button class="btn" onclick="addMaster('${sectionId}','${key}')">追加</button></div><p class="hint">名称・読み方・検索キーが検索対象です。</p></div><div class="card wide"><table><thead><tr>${columns.map(c=>`<th>${esc(c.label)}</th>`).join("")}<th>操作</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  sec.innerHTML = `<div class="card"><h2>${esc(title)}</h2><div class="grid cols">${inputs}</div><div class="toolbar"><button class="btn" onclick="addMaster('${sectionId}','${key}')">追加</button><button class="btn secondary" type="button" onclick="switchPanel('adminHome')">管理者メニューに戻る</button></div><p class="hint">名称・読み方・検索キーが検索対象です。</p></div><div class="card wide"><table><thead><tr>${columns.map(c=>`<th>${esc(c.label)}</th>`).join("")}<th>操作</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 window.addMaster = function(sectionId,key) {
   const row = {};
@@ -464,11 +606,13 @@ document.getElementById("addScore").addEventListener("click", () => {
   const nextStudentName = nextStudentAfter(row.student);
   data.currentDate = row.date;
   data.testName = row.test_name;
+  data.currentSkill = row.skill;
   data.scores.push(row); save();
   scoreDate.value = data.currentDate || today();
   testName.value = data.testName || "";
+  skillInput.value = data.currentSkill || "";
   studentInput.value = nextStudentName;
-  ["skillInput","ratingInput","templateInput","memoInput"].forEach(id => document.getElementById(id).value = "");
+  ["ratingInput","templateInput","memoInput"].forEach(id => document.getElementById(id).value = "");
   commentPairsArr = [{part:"", contents:[]}];
   renderCommentPairs();
   renderStudentQuick();
@@ -477,12 +621,15 @@ document.getElementById("addScore").addEventListener("click", () => {
 document.getElementById("clearScoreForm").addEventListener("click", () => {
   const keepDate = scoreDate.value;
   const keepTestName = testName.value;
+  const keepSkill = skillInput.value;
   data.currentDate = keepDate;
   data.testName = keepTestName;
+  data.currentSkill = keepSkill.trim();
   persist();
-  ["studentInput","skillInput","ratingInput","templateInput","memoInput"].forEach(id => document.getElementById(id).value = "");
+  ["studentInput","ratingInput","templateInput","memoInput"].forEach(id => document.getElementById(id).value = "");
   scoreDate.value = keepDate;
   testName.value = keepTestName;
+  skillInput.value = keepSkill;
   commentPairsArr = [{part:"", contents:[]}];
   renderCommentPairs();
   renderStudentQuick();
@@ -558,8 +705,10 @@ window.editScore = function(i) {
   data.scores[i] = updated;
   data.currentDate = updated.date;
   data.testName = updated.test_name;
+  data.currentSkill = updated.skill;
   scoreDate.value = data.currentDate || today();
   testName.value = data.testName || "";
+  skillInput.value = data.currentSkill || "";
   save();
 }
 window.deleteScore = function(i) { if(confirm("削除しますか？")) { data.scores.splice(i,1); save(); } }
@@ -594,8 +743,43 @@ function expandedScoreRows() {
   return out;
 }
 
+function normalizedFilterValue(id) {
+  const el = document.getElementById(id);
+  return el ? String(el.value || "").trim().toLowerCase() : "";
+}
+function textMatchesFilter(value, filter) {
+  if (!filter) return true;
+  const raw = String(value || "").toLowerCase();
+  return raw.includes(filter) || toHira(raw).includes(toHira(filter)) || kanaToRomaji(raw).includes(kanaToRomaji(filter));
+}
+function exactTextMatchesFilter(value, filter) {
+  if (!filter) return true;
+  const raw = String(value || "").trim().toLowerCase();
+  const f = String(filter || "").trim().toLowerCase();
+  return raw === f;
+}
+function filteredExpandedScoreRows() {
+  const date = normalizedFilterValue("filterDate");
+  const testName = normalizedFilterValue("filterTestName");
+  const student = normalizedFilterValue("filterStudent");
+  const skill = normalizedFilterValue("filterSkill");
+  const rating = normalizedFilterValue("filterRating");
+  return expandedScoreRows().filter(r => {
+    if (date && r.date !== date) return false;
+    if (!textMatchesFilter(r.test_name, testName)) return false;
+    if (!textMatchesFilter(r.student, student)) return false;
+    if (!textMatchesFilter(r.skill, skill)) return false;
+    if (!exactTextMatchesFilter(r.rating, rating)) return false;
+    return true;
+  });
+}
+function scoreCountText(rows) {
+  const scoreIds = new Set(rows.map(r => r.scoreIndex));
+  return `表示件数：${scoreIds.size}件 / 全${data.scores.length}件`;
+}
 function renderScores() {
-  const rows = expandedScoreRows().map(r => `<tr>
+  const filteredRows = filteredExpandedScoreRows();
+  const rows = filteredRows.map(r => `<tr>
     <td>${esc(r.no)}</td>
     <td>${esc(r.date)}</td>
     <td>${esc(r.test_name)}</td>
@@ -607,9 +791,26 @@ function renderScores() {
     <td>${esc(r.memo)}</td>
     <td>${r.pairIndex === 0 ? `<div class="row-actions"><button class="btn secondary" onclick="editScore(${r.scoreIndex})">編集</button><button class="btn danger" onclick="deleteScore(${r.scoreIndex})">削除</button></div>` : ""}</td>
   </tr>`).join("");
-  scoreTable.innerHTML = `<thead><tr><th>No</th><th>日付</th><th>テスト名</th><th>生徒氏名</th><th>技名</th><th>評価</th><th>部位</th><th>内容</th><th>メモ</th><th>操作</th></tr></thead><tbody>${rows}</tbody>`;
+  scoreTable.innerHTML = `<colgroup><col style="width:56px"><col style="width:110px"><col style="width:170px"><col style="width:110px"><col style="width:150px"><col style="width:76px"><col style="width:82px"><col style="width:156px"><col style="width:120px"><col style="width:94px"></colgroup><thead><tr><th>No</th><th>日付</th><th>テスト名</th><th>生徒氏名</th><th>技名</th><th>評価</th><th colspan="2" class="pair-head-cell"><span class="th-pair-pill"><span>部位</span><span>内容</span></span></th><th>メモ</th><th>操作</th></tr></thead><tbody>${rows || '<tr><td colspan="10">該当データなし</td></tr>'}</tbody>`;
+  const count = document.getElementById("scoreFilterCount");
+  if (count) count.textContent = scoreCountText(filteredRows);
+}
+function setupScoreFilters() {
+  ["filterDate","filterTestName","filterStudent","filterSkill","filterRating"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("input", renderScores);
+  });
+  const clearBtn = document.getElementById("clearScoreFilters");
+  if (clearBtn) clearBtn.addEventListener("click", () => {
+    ["filterDate","filterTestName","filterStudent","filterSkill","filterRating"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+    renderScores();
+  });
 }
 downloadScores.addEventListener("click", () => {
+  if (!confirm("今回のテスト採点は完了しています。採点データを出力しますか？")) return;
   const rows = [["No","日付","テスト名","生徒氏名","技名","評価","部位","内容","自由メモ"],
     ...expandedScoreRows().map(r => [r.no,r.date,r.test_name,r.student,r.skill,r.rating,r.part,r.comment,r.memo])];
   downloadCSV("technique_test_scores.csv", rows);
@@ -624,7 +825,16 @@ downloadAllMasters.addEventListener("click", () => {
   downloadCSV("technique_test_masters_v8.csv", rows);
 });
 resetAll.addEventListener("click", () => {
-  if(confirm("全データを初期状態に戻しますか？")) { localStorage.removeItem(LS_KEY); location.reload(); }
+  if (!confirm("全データを初期状態に戻しますか？\nこの操作は元に戻せません。")) return;
+  const code = prompt("採点全データ削除を実行するには、管理者パスコードを入力してください");
+  if (code === null) return;
+  if (code !== ADMIN_CODE) {
+    alert("管理者パスコードが違います。採点全データ削除を中止しました。");
+    return;
+  }
+  localStorage.removeItem(LS_KEY);
+  alert("全データを削除しました。初期状態に戻します。");
+  location.reload();
 });
 
 let commentPairsArr = [{part:"", contents:[]}];
@@ -761,6 +971,7 @@ function refreshAll() {
   renderCommentPairs();
 }
 setupAdminMode();
+setupScoreFilters();
 refreshAll();
 </script>
 </body>
