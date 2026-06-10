@@ -55,7 +55,7 @@
     .th-pair-pill { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#e0f2fe; border:1px solid #bae6fd; color:#075985; border-radius:999px; padding:4px 12px; height:32px; line-height:1; font-weight:900; white-space:nowrap; min-width:116px; box-sizing:border-box; }
     .pair-head-cell { text-align:center; min-width:170px; padding-top:8px; padding-bottom:8px; padding-left:0; padding-right:0; }
     .wide { overflow-x:auto; -webkit-overflow-scrolling:touch; }
-    table { width:100%; min-width:1120px; border-collapse:collapse; background:#fff; table-layout:fixed; }
+    table { width:100%; min-width:920px; border-collapse:collapse; background:#fff; table-layout:fixed; }
     th,td { border-bottom:1px solid var(--line); padding:10px 12px; text-align:left; font-size:14px; vertical-align:middle; }
     th { background:#f3f4f6; white-space:nowrap; vertical-align:middle; }
     #scoreTable thead th { text-align:left; }
@@ -63,14 +63,10 @@
     #scoreTable tbody td:nth-child(2),
     #scoreTable tbody td:nth-child(4),
     #scoreTable tbody td:nth-child(6),
-    #scoreTable tbody td:nth-child(7),
-    #scoreTable tbody td:nth-child(10) { white-space:nowrap; }
+    #scoreTable tbody td:nth-child(8) { white-space:nowrap; }
     #scoreTable tbody td:nth-child(3),
     #scoreTable tbody td:nth-child(5),
-    #scoreTable tbody td:nth-child(8),
-    #scoreTable tbody td:nth-child(9) { word-break:break-word; overflow-wrap:anywhere; white-space:normal; }
-    #scoreTable tbody td:nth-child(7) { padding-right:2px; }
-    #scoreTable tbody td:nth-child(8) { padding-left:2px; }
+    #scoreTable tbody td:nth-child(7) { word-break:break-word; overflow-wrap:anywhere; white-space:normal; }
     .row-actions { display:flex; gap:6px; justify-content:center; }
     .row-actions .btn { padding:6px 8px; font-size:12px; }
     .ac-wrap { position:relative; display:flex; gap:6px; }
@@ -147,6 +143,167 @@
       box-shadow:0 3px 0 #5b21b6, 0 10px 22px rgba(124,58,237,.35);
     }
 
+
+    /* 技名ワンタップ選択：生徒氏名ボタンと呼応する紫パフォーマンス風 */
+    #skillQuickBox .quick-btn.skill {
+      width:74px;
+      min-width:74px;
+      height:48px;
+      min-height:48px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      white-space:normal;
+      overflow-wrap:anywhere;
+      word-break:keep-all;
+      line-height:1.1;
+      font-size:17px;
+      font-weight:900;
+      padding:6px 8px;
+      text-align:center;
+      color:#4c1d95;
+      border:2px solid #a855f7;
+      background:linear-gradient(180deg,#ffffff 0%, #faf5ff 100%);
+      box-shadow:0 3px 0 #ddd6fe, 0 8px 18px rgba(168,85,247,.16);
+      transition:transform .08s ease, box-shadow .08s ease, background .12s ease, color .12s ease;
+    }
+    #skillQuickBox .quick-btn.skill:hover {
+      background:linear-gradient(180deg,#f5f3ff 0%, #ede9fe 100%);
+      transform:translateY(-1px);
+      box-shadow:0 4px 0 #c4b5fd, 0 10px 20px rgba(168,85,247,.22);
+    }
+    #skillQuickBox .quick-btn.skill.active {
+      background:linear-gradient(180deg,#a855f7 0%, #7c3aed 100%);
+      color:#fff;
+      border-color:#7c3aed;
+      box-shadow:0 3px 0 #5b21b6, 0 10px 22px rgba(124,58,237,.35);
+      outline:3px solid rgba(124,58,237,.16);
+      outline-offset:2px;
+    }
+    #skillQuickBox .quick-btn.skill.long {
+      font-size:13px;
+      line-height:1.08;
+      word-break:break-word;
+    }
+
+
+    /* 評価：未選択は白背景＋色枠＋色文字、選択中は色背景＋白文字 */
+    .rating-badge,
+    #ratingQuickBox .quick-btn.grade {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:58px;
+      min-height:44px;
+      border-radius:999px;
+      font-weight:900;
+      border:2px solid currentColor;
+      background:#fff;
+      box-shadow:0 3px 0 rgba(15,23,42,.08), 0 8px 18px rgba(15,23,42,.08);
+      transition:transform .08s ease, box-shadow .08s ease, background .12s ease, color .12s ease;
+    }
+    #ratingQuickBox .quick-btn.grade:hover {
+      transform:translateY(-1px);
+      box-shadow:0 4px 0 rgba(15,23,42,.10), 0 10px 20px rgba(15,23,42,.14);
+    }
+    .rating-badge {
+      min-width:48px;
+      min-height:30px;
+      padding:4px 12px;
+      font-size:14px;
+      box-shadow:none;
+    }
+
+    .rating-Ap, #ratingQuickBox .quick-btn.grade.rating-Ap { color:#5b21b6; border-color:#5b21b6; }
+    .rating-A,  #ratingQuickBox .quick-btn.grade.rating-A  { color:#7c3aed; border-color:#7c3aed; }
+    .rating-Am, #ratingQuickBox .quick-btn.grade.rating-Am { color:#8b5cf6; border-color:#8b5cf6; }
+
+    .rating-Bp, #ratingQuickBox .quick-btn.grade.rating-Bp { color:#1d4ed8; border-color:#1d4ed8; }
+    .rating-B,  #ratingQuickBox .quick-btn.grade.rating-B  { color:#2563eb; border-color:#2563eb; }
+    .rating-Bm, #ratingQuickBox .quick-btn.grade.rating-Bm { color:#60a5fa; border-color:#60a5fa; }
+
+    .rating-Cp, #ratingQuickBox .quick-btn.grade.rating-Cp { color:#d97706; border-color:#d97706; }
+    .rating-C,  #ratingQuickBox .quick-btn.grade.rating-C  { color:#f59e0b; border-color:#f59e0b; }
+    .rating-Cm, #ratingQuickBox .quick-btn.grade.rating-Cm { color:#eab308; border-color:#eab308; }
+
+    .rating-Dp, #ratingQuickBox .quick-btn.grade.rating-Dp { color:#dc2626; border-color:#dc2626; }
+    .rating-D,  #ratingQuickBox .quick-btn.grade.rating-D  { color:#ef4444; border-color:#ef4444; }
+    .rating-Dm, #ratingQuickBox .quick-btn.grade.rating-Dm { color:#f87171; border-color:#f87171; }
+
+    #ratingQuickBox .quick-btn.grade.rating-Ap.active { background:#5b21b6; border-color:#5b21b6; color:#fff; }
+    #ratingQuickBox .quick-btn.grade.rating-A.active  { background:#7c3aed; border-color:#7c3aed; color:#fff; }
+    #ratingQuickBox .quick-btn.grade.rating-Am.active { background:#8b5cf6; border-color:#8b5cf6; color:#fff; }
+
+    #ratingQuickBox .quick-btn.grade.rating-Bp.active { background:#1d4ed8; border-color:#1d4ed8; color:#fff; }
+    #ratingQuickBox .quick-btn.grade.rating-B.active  { background:#2563eb; border-color:#2563eb; color:#fff; }
+    #ratingQuickBox .quick-btn.grade.rating-Bm.active { background:#60a5fa; border-color:#60a5fa; color:#fff; }
+
+    #ratingQuickBox .quick-btn.grade.rating-Cp.active { background:#d97706; border-color:#d97706; color:#fff; }
+    #ratingQuickBox .quick-btn.grade.rating-C.active  { background:#f59e0b; border-color:#f59e0b; color:#fff; }
+    #ratingQuickBox .quick-btn.grade.rating-Cm.active { background:#eab308; border-color:#eab308; color:#fff; }
+
+    #ratingQuickBox .quick-btn.grade.rating-Dp.active { background:#dc2626; border-color:#dc2626; color:#fff; }
+    #ratingQuickBox .quick-btn.grade.rating-D.active  { background:#ef4444; border-color:#ef4444; color:#fff; }
+    #ratingQuickBox .quick-btn.grade.rating-Dm.active { background:#f87171; border-color:#f87171; color:#fff; }
+
+    #ratingQuickBox .quick-btn.grade.active {
+      transform:translateY(1px);
+      box-shadow:inset 0 2px 5px rgba(0,0,0,.20), 0 0 0 3px rgba(124,58,237,.12);
+      outline:3px solid rgba(124,58,237,.16);
+      outline-offset:2px;
+    }
+
+
+    .input-tip-wrap {
+      margin:10px 0 14px;
+    }
+    .input-tip-toggle {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      border:1px solid #5eead4;
+      background:#ecfeff;
+      color:#0f766e;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+      padding:5px 10px;
+      border-radius:999px;
+      box-shadow:0 2px 0 #99f6e4;
+    }
+    .input-tip-toggle:hover {
+      background:#ccfbf1;
+      transform:translateY(-1px);
+      box-shadow:0 3px 0 #5eead4;
+    }
+    .input-tip-note {
+      display:none;
+      margin-top:8px;
+      max-width:760px;
+      background:#f0fdfa;
+      border:1px solid #5eead4;
+      border-left:6px solid #14b8a6;
+      border-radius:14px;
+      padding:14px 16px;
+      box-shadow:0 8px 20px rgba(15,118,110,.14);
+      color:#134e4a;
+      transform:rotate(-.3deg);
+    }
+    .input-tip-note.show {
+      display:block;
+    }
+    .input-tip-note h3 {
+      margin:0 0 8px;
+      font-size:15px;
+      color:#0f766e;
+    }
+    .input-tip-note ul {
+      margin:0;
+      padding-left:1.2em;
+      font-size:13px;
+      line-height:1.75;
+    }
+
     @media (min-width:800px) {
       .menu { grid-template-columns:repeat(4,1fr); }
       .menu button { font-size:16px; padding:14px; }
@@ -174,6 +331,22 @@
       <h2>採点入力</h2>
       <p class="hint">頭文字入力（ひらがな／英字）で検索</p>
       <div class="warning">・必須項目：テスト日・生徒氏名・技名・評価。<br>・同じ日・同じ生徒・同じ技名は1回のみ登録可。</div>
+      <div class="input-tip-wrap">
+        <button class="input-tip-toggle" id="inputTipToggle" type="button" aria-expanded="false">💡Tips入力便利</button>
+        <div class="input-tip-note" id="inputTipNote">
+          <h3>💡Tips入力便利</h3>
+          <ul>
+            <li>テスト日とテスト名は、一度入力すると次の採点にも保持されます。</li>
+            <li>生徒氏名・技名・評価は、ワンタップ選択、リスト選択、頭文字・連想入力ができます。</li>
+            <li>採点を追加すると、生徒氏名は登録順に次の生徒へ自動で切り替わります。技名は保持されます。</li>
+            <li>自由メモは必要な場合のみ入力してください。</li>
+            <li>入力欄クリアを押すと、生徒氏名・技名・評価・自由メモが空欄になります。テスト日とテスト名は保持されます。</li>
+            <li>同じ日・同じ生徒・同じ技名は1回のみ登録できます。</li>
+            <li>絞り込み検索をしている場合でも、CSV出力では採点データ全件が出力されます。</li>
+          </ul>
+        </div>
+      </div>
+
       <p class="hint">採点入力画面ではマスタ編集・マスタCSV出力は表示されません。管理者のみ変更できます。</p>
       <label>生徒ワンタップ選択</label>
       <div class="quick-box" id="studentQuickBox"></div>
@@ -184,17 +357,9 @@
 
       <div class="grid cols">
         <div><label>生徒氏名 ★必須</label><div class="ac-wrap"><input id="studentInput" placeholder="例：と / t / touwa"><button class="drop-btn" data-target="studentInput">▼</button></div></div>
-        <div><label>技名 ★必須</label><div class="ac-wrap"><input id="skillInput" placeholder="例：そ / s / sokuten"><button class="drop-btn" data-target="skillInput">▼</button></div></div>
+        <div><label>技名 ★必須</label><div class="ac-wrap"><input id="skillInput" placeholder="例：そ / s / sokuten"><button class="drop-btn" data-target="skillInput">▼</button></div><div class="quick-box" id="skillQuickBox"></div></div>
         <div><label>評価 ★必須</label><div class="ac-wrap"><input id="ratingInput" placeholder="例：B+"><button class="drop-btn" data-target="ratingInput">▼</button></div><div class="quick-box" id="ratingQuickBox"></div></div>
-        <div style="grid-column:1/-1">
-          <label>コメント</label>
-          <p class="hint">1つの部位に対して、内容を複数選択できます。＋で部位セットを追加します。</p>
-          <div id="commentPairs"></div>
-          <div class="toolbar">
-            <button class="btn secondary" id="addCommentPair" type="button">＋ 部位を追加</button>
-          </div>
-        </div>
-      </div>
+</div>
       
       <input id="templateInput" type="hidden" value="">
       <label>自由メモ</label>
@@ -389,7 +554,18 @@ document.getElementById("testName").value = data.testName || "";
 document.getElementById("skillInput").value = data.currentSkill || "";
 document.getElementById("scoreDate").addEventListener("change", () => { data.currentDate = scoreDate.value; persist(); });
 document.getElementById("testName").addEventListener("input", () => { data.testName = testName.value; persist(); });
-document.getElementById("skillInput").addEventListener("input", () => { data.currentSkill = skillInput.value.trim(); persist(); });
+document.getElementById("skillInput").addEventListener("input", () => { data.currentSkill = skillInput.value.trim(); persist(); renderSkillQuick(); });
+
+
+const inputTipToggle = document.getElementById("inputTipToggle");
+const inputTipNote = document.getElementById("inputTipNote");
+if (inputTipToggle && inputTipNote) {
+  inputTipToggle.addEventListener("click", () => {
+    const show = !inputTipNote.classList.contains("show");
+    inputTipNote.classList.toggle("show", show);
+    inputTipToggle.setAttribute("aria-expanded", String(show));
+  });
+}
 
 document.querySelectorAll("[data-panel]").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -493,6 +669,7 @@ function showMenu(input, key, all=false, onSelect=null) {
       input.value = item.dataset.v;
       if (onSelect) onSelect(item.dataset.v);
       if (input.id === "ratingInput") renderRatingQuick();
+      if (input.id === "skillInput") renderSkillQuick();
       if (input.id === "studentInput") renderStudentQuick();
       if (["filterStudent","filterSkill","filterRating"].includes(input.id)) renderScores();
       closeAllMenus();
@@ -574,24 +751,9 @@ document.getElementById("addScore").addEventListener("click", () => {
   if (!validateMasterField("生徒氏名", "students", "studentInput", true)) return;
   if (!validateMasterField("技名", "skills", "skillInput", true)) return;
   if (!validateMasterField("評価", "ratings", "ratingInput", true)) return;
-  for (const p of commentPairsArr) {
-    if (p.part && !inMaster("parts", p.part)) {
-      alert("部位はマスタから選択してください。入力値: " + p.part);
-      return;
-    }
-    for (const c of p.contents) {
-      if (!inMaster("contents", c)) {
-        alert("内容はマスタから選択してください。入力値: " + c);
-        return;
-      }
-    }
-  }
-  if (!validateMasterField("コメント定型", "templates", "templateInput", false)) return;
   const row = {
     date: scoreDate.value, test_name: testName.value.trim(),
     student: studentInput.value.trim(), skill: skillInput.value.trim(), rating: ratingInput.value.trim(),
-    part: commentPairsArr.filter(p => p.part || p.contents.length).map(p => p.part).join(" / "),
-    content: pairSummary(), template: templateInput.value.trim(),
     memo: memoInput.value.trim()
   };
   const duplicate = data.scores.some(r =>
@@ -613,26 +775,22 @@ document.getElementById("addScore").addEventListener("click", () => {
   skillInput.value = data.currentSkill || "";
   studentInput.value = nextStudentName;
   ["ratingInput","templateInput","memoInput"].forEach(id => document.getElementById(id).value = "");
-  commentPairsArr = [{part:"", contents:[]}];
-  renderCommentPairs();
   renderStudentQuick();
+  renderSkillQuick();
   renderRatingQuick();
 });
 document.getElementById("clearScoreForm").addEventListener("click", () => {
   const keepDate = scoreDate.value;
   const keepTestName = testName.value;
-  const keepSkill = skillInput.value;
   data.currentDate = keepDate;
   data.testName = keepTestName;
-  data.currentSkill = keepSkill.trim();
+  data.currentSkill = "";
   persist();
-  ["studentInput","ratingInput","templateInput","memoInput"].forEach(id => document.getElementById(id).value = "");
+  ["studentInput","skillInput","ratingInput","templateInput","memoInput"].forEach(id => document.getElementById(id).value = "");
   scoreDate.value = keepDate;
   testName.value = keepTestName;
-  skillInput.value = keepSkill;
-  commentPairsArr = [{part:"", contents:[]}];
-  renderCommentPairs();
   renderStudentQuick();
+  renderSkillQuick();
   renderRatingQuick();
 });
 function extractPartsFromContentText(text) {
@@ -682,10 +840,6 @@ window.editScore = function(i) {
   if (!inMaster("ratings", rating)) { alert("評価はマスタから選択してください。入力値: " + rating); return; }
   updated.rating = rating;
 
-  const content = prompt("コメントを編集\n例：肩：低い / 弱い | 足：伸びて", row.content || "");
-  if (content === null) return;
-  updated.content = content.trim();
-  updated.part = extractPartsFromContentText(updated.content) || row.part || "";
 
   const memo = prompt("自由メモを編集", row.memo || "");
   if (memo === null) return;
@@ -713,34 +867,17 @@ window.editScore = function(i) {
 }
 window.deleteScore = function(i) { if(confirm("削除しますか？")) { data.scores.splice(i,1); save(); } }
 
-function splitCommentPairs(row) {
-  const text = String(row.content || "");
-  const parts = text ? text.split(" | ").map(x => x.trim()).filter(Boolean) : [];
-  if (!parts.length) return [{ part: row.part || "", comment: "" }];
-  return parts.map(pair => {
-    const idx = pair.indexOf("：");
-    if (idx >= 0) return { part: pair.slice(0, idx), comment: pair.slice(idx + 1) };
-    return { part: "", comment: pair };
-  });
-}
 function expandedScoreRows() {
-  const out = [];
-  data.scores.forEach((r, scoreIndex) => {
-    splitCommentPairs(r).forEach((p, pairIndex) => {
-      out.push({
-        no: scoreIndex + 1, scoreIndex, pairIndex,
-        date: r.date,
-        test_name: r.test_name,
-        student: r.student,
-        skill: r.skill,
-        rating: r.rating,
-        part: p.part,
-        comment: p.comment,
-        memo: pairIndex === 0 ? (r.memo || "") : ""
-      });
-    });
-  });
-  return out;
+  return data.scores.map((r, scoreIndex) => ({
+    no: scoreIndex + 1,
+    scoreIndex,
+    date: r.date,
+    test_name: r.test_name,
+    student: r.student,
+    skill: r.skill,
+    rating: r.rating,
+    memo: r.memo || ""
+  }));
 }
 
 function normalizedFilterValue(id) {
@@ -785,13 +922,11 @@ function renderScores() {
     <td>${esc(r.test_name)}</td>
     <td>${esc(r.student)}</td>
     <td>${esc(r.skill)}</td>
-    <td>${esc(r.rating)}</td>
-    <td>${esc(r.part)}</td>
-    <td>${esc(r.comment)}</td>
+    <td>${ratingBadge(r.rating)}</td>
     <td>${esc(r.memo)}</td>
-    <td>${r.pairIndex === 0 ? `<div class="row-actions"><button class="btn secondary" onclick="editScore(${r.scoreIndex})">編集</button><button class="btn danger" onclick="deleteScore(${r.scoreIndex})">削除</button></div>` : ""}</td>
+    <td><div class="row-actions"><button class="btn secondary" onclick="editScore(${r.scoreIndex})">編集</button><button class="btn danger" onclick="deleteScore(${r.scoreIndex})">削除</button></div></td>
   </tr>`).join("");
-  scoreTable.innerHTML = `<colgroup><col style="width:56px"><col style="width:110px"><col style="width:170px"><col style="width:110px"><col style="width:150px"><col style="width:76px"><col style="width:82px"><col style="width:156px"><col style="width:120px"><col style="width:94px"></colgroup><thead><tr><th>No</th><th>日付</th><th>テスト名</th><th>生徒氏名</th><th>技名</th><th>評価</th><th colspan="2" class="pair-head-cell"><span class="th-pair-pill"><span>部位</span><span>内容</span></span></th><th>メモ</th><th>操作</th></tr></thead><tbody>${rows || '<tr><td colspan="10">該当データなし</td></tr>'}</tbody>`;
+  scoreTable.innerHTML = `<colgroup><col style="width:56px"><col style="width:110px"><col style="width:170px"><col style="width:110px"><col style="width:150px"><col style="width:76px"><col style="width:160px"><col style="width:94px"></colgroup><thead><tr><th>No</th><th>日付</th><th>テスト名</th><th>生徒氏名</th><th>技名</th><th>評価</th><th>メモ</th><th>操作</th></tr></thead><tbody>${rows || '<tr><td colspan="8">該当データなし</td></tr>'}</tbody>`;
   const count = document.getElementById("scoreFilterCount");
   if (count) count.textContent = scoreCountText(filteredRows);
 }
@@ -811,8 +946,8 @@ function setupScoreFilters() {
 }
 downloadScores.addEventListener("click", () => {
   if (!confirm("今回のテスト採点は完了しています。採点データを出力しますか？")) return;
-  const rows = [["No","日付","テスト名","生徒氏名","技名","評価","部位","内容","自由メモ"],
-    ...expandedScoreRows().map(r => [r.no,r.date,r.test_name,r.student,r.skill,r.rating,r.part,r.comment,r.memo])];
+  const rows = [["No","日付","テスト名","生徒氏名","技名","評価","自由メモ"],
+    ...expandedScoreRows().map(r => [r.no,r.date,r.test_name,r.student,r.skill,r.rating,r.memo])];
   downloadCSV("technique_test_scores.csv", rows);
 });
 downloadAllMasters.addEventListener("click", () => {
@@ -867,12 +1002,31 @@ function renderStudentQuick() {
   const current = studentInput.value.trim();
   studentQuickBox.innerHTML = data.students.map(s => `<button type="button" class="quick-btn ${s.name === current ? 'active' : ''}" onclick="setStudent('${esc(s.name)}')">${esc(s.name)}</button>`).join("");
 }
+function renderSkillQuick() {
+  const box = document.getElementById("skillQuickBox");
+  if (!box) return;
+  box.innerHTML = data.skills.map(s => {
+    const isLong = String(s.name || "").length >= 5;
+    return `<button type="button" class="quick-btn skill ${isLong ? 'long' : ''} ${s.name === skillInput.value.trim() ? 'active' : ''}" onclick="skillInput.value='${esc(s.name)}'; data.currentSkill=skillInput.value.trim(); persist(); renderSkillQuick();">${esc(s.name)}</button>`;
+  }).join("");
+}
+function ratingClass(value) {
+  const v = String(value || "").trim();
+  return {
+    "A+": "rating-Ap", "A": "rating-A", "A-": "rating-Am",
+    "B+": "rating-Bp", "B": "rating-B", "B-": "rating-Bm",
+    "C+": "rating-Cp", "C": "rating-C", "C-": "rating-Cm",
+    "D+": "rating-Dp", "D": "rating-D", "D-": "rating-Dm"
+  }[v] || "";
+}
+function ratingBadge(value) {
+  return `<span class="rating-badge ${ratingClass(value)}">${esc(value)}</span>`;
+}
 function renderRatingQuick() {
-  ratingQuickBox.innerHTML = data.ratings.map(r => `<button type="button" class="quick-btn grade ${r.name === ratingInput.value.trim() ? 'active' : ''}" onclick="ratingInput.value='${esc(r.name)}'; renderRatingQuick();">${esc(r.name)}</button>`).join("");
+  ratingQuickBox.innerHTML = data.ratings.map(r => `<button type="button" class="quick-btn grade ${ratingClass(r.name)} ${r.name === ratingInput.value.trim() ? 'active' : ''}" onclick="ratingInput.value='${esc(r.name)}'; renderRatingQuick();">${esc(r.name)}</button>`).join("");
 }
 function addPair() {
   commentPairsArr.push({part:"", contents:[]});
-  renderCommentPairs();
 }
 function removePair(idx) {
   if (commentPairsArr.length <= 1) {
@@ -880,20 +1034,16 @@ function removePair(idx) {
   } else {
     commentPairsArr.splice(idx, 1);
   }
-  renderCommentPairs();
 }
 function setPairPart(idx, value) {
   commentPairsArr[idx].part = value;
-  renderCommentPairs();
 }
 function addPairContent(idx, value) {
   if (!value || !inMaster("contents", value)) return;
   if (!commentPairsArr[idx].contents.includes(value)) commentPairsArr[idx].contents.push(value);
-  renderCommentPairs();
 }
 function removePairContent(idx, value) {
   commentPairsArr[idx].contents = commentPairsArr[idx].contents.filter(x => x !== value);
-  renderCommentPairs();
 }
 function pairSummary() {
   return commentPairsArr
@@ -959,7 +1109,6 @@ function renderCommentPairs() {
 }
 prevStudent.addEventListener("click", () => moveStudent(-1));
 nextStudent.addEventListener("click", () => moveStudent(1));
-addCommentPair.addEventListener("click", addPair);
 studentInput.addEventListener("input", renderStudentQuick);
 ratingInput.addEventListener("input", renderRatingQuick);
 
@@ -967,8 +1116,8 @@ function refreshAll() {
   Object.entries(masterDefs).forEach(([key,def]) => renderMaster(def.section,def.title,key,def.columns));
   renderScores();
   renderStudentQuick();
+  renderSkillQuick();
   renderRatingQuick();
-  renderCommentPairs();
 }
 setupAdminMode();
 setupScoreFilters();
